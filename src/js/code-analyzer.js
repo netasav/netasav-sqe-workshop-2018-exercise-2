@@ -33,7 +33,6 @@ const parseCode = (codeToParse) => {
 function FuncDec_func(node,metadata){
     func_declaration_line=metadata.start.line;
     pushNode(metadata.start.line,'Function declaration',node.id.name,'','');
-   // blockCondition(metadata.start.line,'Function declaration','');
     for(let i=0; i<node.params.length;i++) {
         pushNode(metadata.start.line,'variable declaration',node.params[i].name,'','');
         params.push({name:node.params[i].name,column:node.params[i].loc.start.column});
@@ -311,6 +310,7 @@ function splitInputLocalsToArray(input_locals){
     return toReturn;
 }
 
+
 function initParams(params) {
     let paramsArr = [];
     if (params.includes(']'))
@@ -520,7 +520,12 @@ function insert_line_dic(idx, line) {
     if (localDic.size == 0) {
         localDic = local_vars_map;
     }
-    //if(localDic[nodes_after_parse[idx].Name]){}
+    let exp_val=geteExpVl(localDic,idx);
+    localDic.set(nodes_after_parse[idx].Name, exp_val);
+    lines_map.set(line, localDic);
+}
+//used in  insert_line_dic
+function geteExpVl(localDic,idx){
     let exp_val = nodes_after_parse[idx].Value;
     let exp = splitBinarryExpression(exp_val);
     for (let i = 0; i < exp.length; i++) {
@@ -529,8 +534,7 @@ function insert_line_dic(idx, line) {
                 exp_val = exp_val.replace(exp[i], '(' + localDic.get(exp[i]) + ')');
         }
     }
-    localDic.set(nodes_after_parse[idx].Name, exp_val);
-    lines_map.set(line, localDic);
+    return exp_val;
 }
 //check if node is local var
 function isLocalVar(i) {
@@ -658,15 +662,10 @@ function insertLinesToPrint(){
             if(!linesToPrint.includes(nodes_after_parse[i].Line)){
                 linesToPrint.push(nodes_after_parse[i].Line);
             }
-            else{
-                continue;
-            }
-
+            else{continue;}
         }
         else if(nodes_after_parse[i].Type=='return statement' || paramNames.includes(nodes_after_parse[i].Name)){ //if return statementLine or  parameter essingment
-            // if(!linesToPrint.includes(nodes_after_parse[i].Line)){
             linesToPrint.push(nodes_after_parse[i].Line);
-            //}
         }
     }
     return linesToPrint;
@@ -703,6 +702,9 @@ function getGlobalsNameArray()
             lastFuncLine=blocks[i].end;
         }
     }
+    return helpToGlobals(lastFuncLine);
+}
+function helpToGlobals(lastFuncLine){
     let globalsName=[];
     for(let i=0;i<nodes_after_parse.length;i++){
         if(nodes_after_parse[i].Line<func_declaration_line ||nodes_after_parse[i].Line>lastFuncLine ){

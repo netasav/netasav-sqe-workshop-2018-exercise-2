@@ -141,7 +141,7 @@ describe('The javascript parser',() => {
         var input= '1,2,3';
         parseCode(code);
         var colors=[];
-        var newLinesToShow =assignment2(input,code)
+        var newLinesToShow =assignment2(input,code);
         for(let i=0;i<newLinesToShow.length;i++){
             colors.push(newLinesToShow[i].bool);
         }
@@ -318,7 +318,6 @@ describe('The javascript parser',() => {
         assert.deepEqual(colors,[2,1,0,2,1,2,1,0,2,1,2,2]);
     });
 });
-
 describe('The javascript parser',() => {
     it('&& inside condition', () => {
         var code='function foo(x, y, z){\n' +

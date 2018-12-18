@@ -342,3 +342,51 @@ describe('The javascript parser',() => {
         assert.deepEqual(colors,[2,1,2,2]);
     });
 });
+describe('The javascript parser',() => {
+    it('|| inside condition', () => {
+        var code='function foo(x, y, z){\n' +
+            '    let a = x + 1;\n' +
+            '    let b = a + y;\n' +
+            '    let c = 0;\n' +
+            '    \n' +
+            '    while (a < z || b < z) {\n' +
+            '        c = a + b;\n' +
+            '        z = c * 2;\n' +
+            '    }\n' +
+            '    \n' +
+            '    return z;\n' +
+            '}';
+        var input= '1,2,3';
+        parseCode(code);
+        var colors=[];
+        var newLinesToShow =assignment2(input,code)
+        for(let i=0;i<newLinesToShow.length;i++){
+            colors.push(newLinesToShow[i].bool);
+        }
+        assert.deepEqual(colors,[2,1,2,2]);
+    });
+});
+describe('The javascript parser',() => {
+    it('|| inside condition that only one true', () => {
+        var code='function foo(x, y, z){\n' +
+            '    let a = x + 1;\n' +
+            '    let b = a + y;\n' +
+            '    let c = 0;\n' +
+            '    \n' +
+            '    while (a < z || b > z) {\n' +
+            '        c = a + b;\n' +
+            '        z = c * 2;\n' +
+            '    }\n' +
+            '    \n' +
+            '    return z;\n' +
+            '}\n';
+        var input= '1,2,3';
+        parseCode(code);
+        var colors=[];
+        var newLinesToShow =assignment2(input,code)
+        for(let i=0;i<newLinesToShow.length;i++){
+            colors.push(newLinesToShow[i].bool);
+        }
+        assert.deepEqual(colors,[2,1,2,2]);
+    });
+});
